@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class TelegramSenderService {
     private final TelegramBot telegramBot;
-    public TelegramSenderService(TelegramBot telegramBot){
+
+    public TelegramSenderService(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
     }
-    public void sendMessage(Long chatId, String text){
+
+    public void sendMessage(Long chatId, String text) {
         telegramBot.execute(new SendMessage(chatId, text));
     }
 }
