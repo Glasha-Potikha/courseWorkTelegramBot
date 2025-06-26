@@ -1,2 +1,5 @@
 /.idea/
 *.iml
+target/
+mvnw
+mvnw.cmd
