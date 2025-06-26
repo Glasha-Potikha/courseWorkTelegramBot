@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.telegrambot.model.NotificationTask;
 import pro.sky.telegrambot.repositories.NotificationTaskRepository;
+import pro.sky.telegrambot.service.TelegramSenderService;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
@@ -22,7 +23,8 @@ import java.util.regex.Pattern;
 public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
-
+    @Autowired
+    private TelegramSenderService telegramSenderService;
     @Autowired
     private TelegramBot telegramBot;
 
@@ -62,10 +64,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         //сохраняем напоминалку
                         NotificationTask task = new NotificationTask(chatId, taskText, dateTime);
                         notificationTaskRepository.save(task);
-                        telegramBot.execute(new SendMessage(chatId, "Поняль-принял, в нужное время тебе напомню"));
+                        telegramSenderService.sendMessage(chatId, "Поняль-принял, в нужное время тебе напомню");
 
                     } else {
-                        telegramBot.execute(new SendMessage(chatId, "Я тебя не понимаю.. формат напоминалки неверный"));
+                        telegramSenderService.sendMessage(chatId, "Я тебя не понимаю.. формат напоминалки неверный");
                     }
                 }
             }

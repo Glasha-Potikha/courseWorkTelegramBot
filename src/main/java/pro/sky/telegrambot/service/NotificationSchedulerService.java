@@ -14,11 +14,11 @@ import java.util.List;
 @Service
 public class NotificationSchedulerService {
     private final NotificationTaskRepository notificationTaskRepository;
-    private final TelegramBot telegramBot;
+    private final TelegramSenderService telegramSenderService;
 
-    public NotificationSchedulerService(NotificationTaskRepository notificationTaskRepository, TelegramBot telegramBot) {
+    public NotificationSchedulerService(NotificationTaskRepository notificationTaskRepository, TelegramSenderService telegramSenderService) {
         this.notificationTaskRepository = notificationTaskRepository;
-        this.telegramBot = telegramBot;
+        this.telegramSenderService = telegramSenderService;
     }
 
     @Scheduled(cron = "0 * * * * *")//каждый час, каждую минуту, в ноль секунд
@@ -27,8 +27,7 @@ public class NotificationSchedulerService {
         List<NotificationTask> tasks = notificationTaskRepository.findAllByReminderTime(now);
 
         for (NotificationTask task : tasks) {
-            SendMessage message = new SendMessage(task.getChatId(), task.getText());
-            telegramBot.execute(message);
+            telegramSenderService.sendMessage(task.getChatId(), task.getText());
             //подумала, чтобы не захламлять БД старыми напоминалками, удалять после отправки
             notificationTaskRepository.delete(task);
         }
